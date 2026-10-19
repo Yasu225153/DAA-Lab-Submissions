@@ -13,19 +13,16 @@ struct Record {
 };
 
 void merge(vector<Record>& arr, int left, int mid, int right) {
-
     vector<Record> temp;
 
     int i = left;
     int j = mid + 1;
 
     while (i <= mid && j <= right) {
-
         if (arr[i].timestamp <= arr[j].timestamp) {
             temp.push_back(arr[i]);
             i++;
-        }
-        else {
+        } else {
             temp.push_back(arr[j]);
             j++;
         }
@@ -47,7 +44,6 @@ void merge(vector<Record>& arr, int left, int mid, int right) {
 }
 
 void mergeSort(vector<Record>& arr, int left, int right) {
-
     if (left >= right)
         return;
 
@@ -60,10 +56,9 @@ void mergeSort(vector<Record>& arr, int left, int right) {
 }
 
 int main() {
-
     vector<Record> data;
 
-    ifstream file("test.csv");
+    ifstream file("test_dataset.csv");
 
     if (!file.is_open()) {
         cout << "Error: Could not open test.csv" << endl;
@@ -72,23 +67,21 @@ int main() {
 
     string line;
 
-    // Skip header
+    // Skip the CSV header
     getline(file, line);
 
     while (getline(file, line)) {
-
         if (line.empty())
             continue;
 
         stringstream ss(line);
-
         Record r;
 
         getline(ss, r.id, ',');
         getline(ss, r.name, ',');
         getline(ss, r.timestamp);
 
-        // Remove possible \r from Windows CSV files
+        // Remove carriage return from Windows CSV files
         if (!r.timestamp.empty() && r.timestamp.back() == '\r') {
             r.timestamp.pop_back();
         }
@@ -105,16 +98,26 @@ int main() {
         return 0;
     }
 
-    mergeSort(data, 0, data.size() - 1);
+    // Sort all records by timestamp
+    mergeSort(data, 0, static_cast<int>(data.size()) - 1);
 
-    cout << "\nSorted Data:\n";
-    cout << "---------------------------------------------\n";
+    // Display only the first 10 sorted rows
+    cout << "\nFirst 10 Rows After Sorting:\n";
+    cout << "------------------------------------------------------------\n";
+    cout << "ID\tName\tTimestamp\n";
+    cout << "------------------------------------------------------------\n";
 
-    for (const auto& r : data) {
-        cout << r.id << " "
-             << r.name << " "
-             << r.timestamp << endl;
+    int limit = (data.size() < 10) ? data.size() : 10;
+
+    for (int i = 0; i < limit; i++) {
+        cout << data[i].id << "\t"
+             << data[i].name << "\t"
+             << data[i].timestamp << endl;
     }
+
+    cout << "------------------------------------------------------------\n";
+    cout << "Total records sorted: " << data.size() << endl;
+    cout << "Rows displayed: " << limit << endl;
 
     return 0;
 }
